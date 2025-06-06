@@ -6,7 +6,7 @@
 
 import os
 os.environ["USE_TF"] = "0"  # Disable TensorFlow in Transformers
-
+import requests
 import pandas as pd
 import torch
 import re
