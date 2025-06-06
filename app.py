@@ -57,8 +57,6 @@ def load_model_and_tokenizer():
     model.eval()
     return tokenizer, model
 
-tokenizer, model = load_model_and_tokenizer()
-
 # --------------------------
 # Extract time range if month-year exists in Calendar query
 # --------------------------
