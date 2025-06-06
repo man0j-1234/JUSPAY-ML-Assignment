@@ -39,12 +39,26 @@ st.title("Gmail vs Calendar Query Classifier")
 st.header("Try")
 st.markdown("Find emails with large attachments")
 st.markdown("When is my next meeting with the design team?")
-st.markdown("“Find my meetings for June 2025")
+st.markdown("Find my meetings for June 2025")
 
 
 tokenizer, model = load_model_and_tokenizer()
 
-user_input = st.text_input("Enter your query here")
+# Custom CSS for styling
+st.markdown("""
+    <style>
+    .custom-input input {
+        background-color: #f0f2f6;
+        border: 2px solid #4a90e2;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+# Styled input
+user_input = st.text_input("Enter your query here", key="styled_input")
+st.markdown('<div class="custom-input"></div>', unsafe_allow_html=True)
 
 if user_input:
     inputs = tokenizer(user_input, return_tensors="pt")
