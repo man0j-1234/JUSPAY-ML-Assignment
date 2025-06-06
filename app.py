@@ -13,7 +13,9 @@ import re
 import calendar
 import streamlit as st
 import zipfile
+import gdown
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
+
 
 # --------------------------------------------------------
 # CONFIGURATION: Google Drive file IDs for model/tokenizer
@@ -24,39 +26,31 @@ TOKENIZER_ZIP_ID = "1KxG4prB5Y5s8HOy11wPI37s7tAXU8xyB"   # saved_tokenizer.zip
 MODEL_DIR = "saved_model"
 TOKENIZER_DIR = "saved_tokenizer"
 
-# --------------------------
-# Utility: Download from GDrive
-# --------------------------
-def download_from_gdrive(file_id, dest_path):
-    url = f"https://drive.google.com/uc?id={file_id}"
-    response = requests.get(url)
-    with open(dest_path, 'wb') as f:
-        f.write(response.content)
 
-# --------------------------
-# Utility: Unzip the model/tokenizer
-# --------------------------
-def unzip_file(zip_path, extract_to):
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        zip_ref.extractall(extract_to)
-
-# --------------------------
-# Load model & tokenizer (only once)
-# --------------------------
 @st.cache_resource
 def load_model_and_tokenizer():
+    MODEL_DIR = "saved_model"
+    TOKENIZER_DIR = "saved_tokenizer"
+
+    # Google Drive file IDs (not full URLs)
+    MODEL_ZIP_ID = "1bo5akUEzOYdz3OWnw37fleJhSvu6Y_FE"
+    TOKENIZER_ZIP_ID = "1KxG4prB5Y5s8HOy11wPI37s7tAXU8xyB"
+
     if not os.path.exists(MODEL_DIR):
-        download_from_gdrive(MODEL_ZIP_ID, "model.zip")
-        unzip_file("model.zip", MODEL_DIR)
+        gdown.download(id=MODEL_ZIP_ID, output="model.zip", quiet=False)
+        with zipfile.ZipFile("model.zip", 'r') as zip_ref:
+            zip_ref.extractall(MODEL_DIR)
 
     if not os.path.exists(TOKENIZER_DIR):
-        download_from_gdrive(TOKENIZER_ZIP_ID, "tokenizer.zip")
-        unzip_file("tokenizer.zip", TOKENIZER_DIR)
+        gdown.download(id=TOKENIZER_ZIP_ID, output="tokenizer.zip", quiet=False)
+        with zipfile.ZipFile("tokenizer.zip", 'r') as zip_ref:
+            zip_ref.extractall(TOKENIZER_DIR)
 
     tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_DIR)
     model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR)
     model.eval()
     return tokenizer, model
+
 
 # --------------------------
 # Extract time range if month-year exists in Calendar query
