@@ -39,7 +39,7 @@ st.title("📧 Gmail vs 📅 Calendar Query Classifier")
 
 tokenizer, model = load_model_and_tokenizer()
 
-user_input = st.text_input("Enter your query here:")
+user_input = st.text_input("Enter your query here")
 
 if user_input:
     inputs = tokenizer(user_input, return_tensors="pt")
