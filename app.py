@@ -29,7 +29,8 @@ with zipfile.ZipFile("tokenizer.zip", 'r') as zip_ref:
     zip_ref.extractall(TOKENIZER_DIR)
 
 # This works ONLY if tokenizer.zip has config.json, vocab.json directly inside
-tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_DIR)
+# tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_DIR)
+tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_DIR, trust_remote_code=True)
 
 
 # -----------------------------
