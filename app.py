@@ -45,7 +45,7 @@ st.markdown("Find my meetings for June 2025")
 tokenizer, model = load_model_and_tokenizer()
 
 
-user_input = st.text_input("ENTER YOUR QUERY BELOW")
+user_input = st.text_input("ENTER  YOUR  QUERY  BELOW")
 
 
 if user_input:
