@@ -66,8 +66,7 @@ You can launch the app directly using Streamlit Cloud or Hugging Face Spaces.
 | "Add meeting with team tomorrow at 5"  | Calendar           |
 | "Check messages about project updates" | Gmail              |
 | "What's on my schedule this Friday?"   | Calendar           |
-| Find my meetings for June 2025 "       | Caleder            |
-                                           Also = Extracted Time Range: from: June 1, 2025 to: June 30, 2025 
+| Find my meetings for June 2025 "       | Calendar ,Extracted Time Range: from: June 1, 2025 to: June 30, 2025 |
 
 ## 📈 Results
 
