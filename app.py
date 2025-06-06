@@ -23,6 +23,15 @@ TOKENIZER_ZIP_ID = "19c-u9w6E7Jc1DNtiqpiMiGVUf_4M8mgo"   # saved_tokenizer.zip
 MODEL_DIR = "saved_model"
 TOKENIZER_DIR = "saved_tokenizer"
 
+# Download and unzip tokenizer correctly
+gdown.download(id=TOKENIZER_ZIP_ID, output="tokenizer.zip", quiet=False)
+with zipfile.ZipFile("tokenizer.zip", 'r') as zip_ref:
+    zip_ref.extractall(TOKENIZER_DIR)
+
+# This works ONLY if tokenizer.zip has config.json, vocab.json directly inside
+tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_DIR)
+
+
 # -----------------------------
 # Function to download and unzip from Google Drive
 # -----------------------------
@@ -31,6 +40,7 @@ def download_and_extract_from_gdrive(file_id, output_zip, extract_dir):
         gdown.download(id=file_id, output=output_zip, quiet=False)
         with zipfile.ZipFile(output_zip, 'r') as zip_ref:
             zip_ref.extractall(extract_dir)
+
 
 # -----------------------------
 # Load model and tokenizer with caching
