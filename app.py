@@ -16,8 +16,8 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 os.environ["USE_TF"] = "0"
 
 # Google Drive File IDs for downloading model/tokenizer
-MODEL_ZIP_ID = "1bo5akUEzOYdz3OWnw37fleJhSvu6Y_FE"       # saved_model.zip
-TOKENIZER_ZIP_ID = "1KxG4prB5Y5s8HOy11wPI37s7tAXU8xyB"   # saved_tokenizer.zip
+MODEL_ZIP_ID = "1bCufJBfWSW4f2Ncehxrv04eeL1XLgmNZ"       # saved_model.zip
+TOKENIZER_ZIP_ID = "19c-u9w6E7Jc1DNtiqpiMiGVUf_4M8mgo"   # saved_tokenizer.zip
 
 # Local paths
 MODEL_DIR = "saved_model"
@@ -61,7 +61,7 @@ def extract_date_range(query):
 # -----------------------------
 # Streamlit Interface
 # -----------------------------
-st.title("📧 Gmail vs 📅 Calendar Query Classifier")
+st.title("Gmail vs Calendar Query Classifier")
 
 st.markdown("Enter a query related to Gmail or Calendar and let the model classify it!")
 
@@ -69,7 +69,7 @@ st.markdown("Enter a query related to Gmail or Calendar and let the model classi
 tokenizer, model = load_model_and_tokenizer()
 
 # User input
-user_input = st.text_input("🔍 Enter your query:")
+user_input = st.text_input("Enter your query:")
 
 if user_input:
     inputs = tokenizer(user_input, return_tensors="pt")
@@ -78,9 +78,9 @@ if user_input:
         prediction = torch.argmax(outputs.logits, dim=1).item()
 
     category = "Gmail" if prediction == 0 else "Calendar"
-    st.success(f"🧠 Predicted Category: **{category}**")
+    st.success(f"Predicted Category: **{category}**")
 
     if category == "Calendar":
         time_range = extract_date_range(user_input)
         if time_range:
-            st.info(f"📅 Extracted Time Range: {time_range}")
+            st.info(f"Extracted Time Range: {time_range}")
