@@ -1,60 +1,53 @@
-# Gmail vs Calendar Query Classifier using BERT (Deployment Version)
-# -------------------------------------------------------------------
-# This script loads a pre-trained BERT-based model and tokenizer
-# to classify queries as Gmail or Calendar. It uses Streamlit for
-# an interactive interface.
+# Gmail vs Calendar Query Classifier using BERT (Streamlit Deployment)
+# ---------------------------------------------------------------------
+# This script loads a trained Roberta model and tokenizer to classify
+# user queries into Gmail or Calendar using a Streamlit interface.
 
 import os
-os.environ["USE_TF"] = "0"  # Disable TensorFlow in Transformers
-import requests
-import pandas as pd
 import torch
 import re
 import calendar
-import streamlit as st
 import zipfile
 import gdown
+import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
+# Disable TensorFlow usage in HuggingFace Transformers
+os.environ["USE_TF"] = "0"
 
-# --------------------------------------------------------
-# CONFIGURATION: Google Drive file IDs for model/tokenizer
-# --------------------------------------------------------
+# Google Drive File IDs for downloading model/tokenizer
 MODEL_ZIP_ID = "1bo5akUEzOYdz3OWnw37fleJhSvu6Y_FE"       # saved_model.zip
 TOKENIZER_ZIP_ID = "1KxG4prB5Y5s8HOy11wPI37s7tAXU8xyB"   # saved_tokenizer.zip
 
+# Local paths
 MODEL_DIR = "saved_model"
 TOKENIZER_DIR = "saved_tokenizer"
 
+# -----------------------------
+# Function to download and unzip from Google Drive
+# -----------------------------
+def download_and_extract_from_gdrive(file_id, output_zip, extract_dir):
+    if not os.path.exists(extract_dir):
+        gdown.download(id=file_id, output=output_zip, quiet=False)
+        with zipfile.ZipFile(output_zip, 'r') as zip_ref:
+            zip_ref.extractall(extract_dir)
 
+# -----------------------------
+# Load model and tokenizer with caching
+# -----------------------------
 @st.cache_resource
 def load_model_and_tokenizer():
-    MODEL_DIR = "saved_model"
-    TOKENIZER_DIR = "saved_tokenizer"
-
-    # Google Drive file IDs (not full URLs)
-    MODEL_ZIP_ID = "1bo5akUEzOYdz3OWnw37fleJhSvu6Y_FE"
-    TOKENIZER_ZIP_ID = "1KxG4prB5Y5s8HOy11wPI37s7tAXU8xyB"
-
-    if not os.path.exists(MODEL_DIR):
-        gdown.download(id=MODEL_ZIP_ID, output="model.zip", quiet=False)
-        with zipfile.ZipFile("model.zip", 'r') as zip_ref:
-            zip_ref.extractall(MODEL_DIR)
-
-    if not os.path.exists(TOKENIZER_DIR):
-        gdown.download(id=TOKENIZER_ZIP_ID, output="tokenizer.zip", quiet=False)
-        with zipfile.ZipFile("tokenizer.zip", 'r') as zip_ref:
-            zip_ref.extractall(TOKENIZER_DIR)
+    download_and_extract_from_gdrive(MODEL_ZIP_ID, "model.zip", MODEL_DIR)
+    download_and_extract_from_gdrive(TOKENIZER_ZIP_ID, "tokenizer.zip", TOKENIZER_DIR)
 
     tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_DIR)
     model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR)
     model.eval()
     return tokenizer, model
 
-
-# --------------------------
-# Extract time range if month-year exists in Calendar query
-# --------------------------
+# -----------------------------
+# Function to extract date range from text
+# -----------------------------
 def extract_date_range(query):
     match = re.search(r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})", query, re.IGNORECASE)
     if match:
@@ -65,14 +58,19 @@ def extract_date_range(query):
         return f"from: {month} 1, {year} to: {month} {num_days}, {year}"
     return None
 
-# Load the tokenizer and model
-tokenizer, model = load_model_and_tokenizer()
-# --------------------------
-# UI
-# --------------------------
-st.title("Gmail vs Calendar Query Classifier - by Manoj")
+# -----------------------------
+# Streamlit Interface
+# -----------------------------
+st.title("📧 Gmail vs 📅 Calendar Query Classifier")
 
-user_input = st.text_input("Enter your query:")
+st.markdown("Enter a query related to Gmail or Calendar and let the model classify it!")
+
+# Load model/tokenizer once
+tokenizer, model = load_model_and_tokenizer()
+
+# User input
+user_input = st.text_input("🔍 Enter your query:")
+
 if user_input:
     inputs = tokenizer(user_input, return_tensors="pt")
     with torch.no_grad():
@@ -80,9 +78,9 @@ if user_input:
         prediction = torch.argmax(outputs.logits, dim=1).item()
 
     category = "Gmail" if prediction == 0 else "Calendar"
-    st.success(f"Predicted Category: {category}")
+    st.success(f"🧠 Predicted Category: **{category}**")
 
     if category == "Calendar":
         time_range = extract_date_range(user_input)
         if time_range:
-            st.info(f"Time Range Extracted: {time_range}")
+            st.info(f"📅 Extracted Time Range: {time_range}")
