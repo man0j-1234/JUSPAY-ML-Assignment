@@ -70,6 +70,8 @@ def extract_date_range(query):
         return f"from: {month} 1, {year} to: {month} {num_days}, {year}"
     return None
 
+# Load the tokenizer and model
+tokenizer, model = load_model_and_tokenizer()
 # --------------------------
 # UI
 # --------------------------
