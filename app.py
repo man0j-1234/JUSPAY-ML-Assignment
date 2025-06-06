@@ -36,10 +36,10 @@ def extract_date_range(query):
 # Streamlit App UI
 # ----------------------
 st.title("Gmail vs Calendar Query Classifier")
-st.text("Try")
-st.text("Find emails with large attachments")
-st.text("When is my next meeting with the design team?")
-st.text("“Find my meetings for June 2025")
+st.header("Try")
+st.markdown("Find emails with large attachments")
+st.markdown("When is my next meeting with the design team?")
+st.markdown("“Find my meetings for June 2025")
 
 
 tokenizer, model = load_model_and_tokenizer()
